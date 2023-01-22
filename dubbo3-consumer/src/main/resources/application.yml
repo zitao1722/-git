@@ -1,0 +1,19 @@
+# 应用名称
+spring:
+  application:
+    name: dubbo3-consumer
+
+# 端口号
+server:
+  port: 8001
+
+# dubbo配置
+dubbo:
+  application:
+    name: dubbo3-consumer  # 服务提供给注册中心的名称
+  protocol:  # 如果自己不对外提供服务，可以不写这个，只配置下面的注册中心地址
+#    name: dubbo  # 使用的协议
+    name: tri  # 使用triple协议，写tri即可，不可以写triple
+    port: 20880  # 使用的端口，默认为20880
+  registry:
+    address: zookeeper://192.168.204.129:2181  # 注册中心地址，这里是c

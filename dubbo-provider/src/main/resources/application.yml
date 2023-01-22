@@ -1,0 +1,22 @@
+# 应用名称
+spring:
+  application:
+    name: dubbo-provider
+
+# 服务端口
+server:
+  port: 8002
+
+# dubbo配置
+dubbo:
+  application:
+    name: dubbo-provider  # 服务提供给注册中心的名称
+    # 在dubbo3.0之前，dubbo是进行接口级粒度的注册，而springcloud是应用级，3.0后dubbo也支持应用级
+    # dubbo.application.register-mode:  instance  # 这个配置代表着dubbor提供给注册中心的服务粒度，instance是应用级，interface是接口级，all是全部
+  protocol:
+#    name: dubbo  # 使用的协议
+    name: tri  # 使用triple协议，写tri即可，不可写triple
+    port: 20880  # 使用的端口，默认为20880
+  registry:
+    address: zookeeper://192.168.204.129:2181  # 注册中心地址，这里是centos虚拟机
+
