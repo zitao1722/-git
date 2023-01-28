@@ -1,0 +1,68 @@
+server:
+  port: 8024
+spring:
+  application:
+    name: openfeign-sentinel
+  cloud:
+    nacos:
+      server-addr: 8.134.144.240:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: 66303517-4bae-4f16-9874-1466561154b2
+        group: test
+      config:
+        server-addr: 8.134.144.240:8848
+        namespace: 66303517-4bae-4f16-9874-1466561154b2
+        prefix: openfeign-sentinel
+        group: test
+        file-extension: yaml
+    sentinel:
+      enabled: true
+      transport:
+        dashboard: 127.0.0.1:8020
+        port: 8719
+      datasource:
+        flow-rule: # 这个名字可以自定义
+          nacos:
+            server-addr: 8.134.144.240:8848  # nacos 的地址
+            username: nacos  # nacos 用户名
+            password: nacos  # nacos　密码
+            # 配置文件的 dataId
+            dataId: sentinel-config-dev.json
+            rule-type: flow  # 配置的规则是：流控规则
+            data-type: json  # 配置文件类型是：json
+            namespace: 66303517-4bae-4f16-9874-1466561154b2
+            groupId: test
+  config:
+    import:
+      - optional:nacos:openfeign-sentinel-dev.yaml
+  #      - optional:nacos:sentinel-config-dev.json
+  profiles:
+    active: dev
+
+# springboot 默认的日志级别是 info, feign 是 debug ，info > debug，所以不会输出feign 日志，如果想要输出，添加以下配置：在此包下输出deubg日志
+logging:
+  level:
+    com.zitao.openfeign_sentinel: debug
+
+# 启用 openfeign 对 sentinel 的支持
+feign:
+  sentinel:
+    enabled: true
+
+#feign:
+#  client:
+#    config:
+#      openfeign-product:
+#        # 连接超时时间，默认为2s
+#        connect-timeout: 5000
+#        # 请求处理超时时间，默认为5s
+#        read-timeout: 10000
+#        # 使用自定义的feign拦截器
+#        request-interceptors:
+#          com.zitao.openfeign.interceptor.FeignInterceptor
+
+# openFeign 的局部日志配置
+#        logger-level: FULL
+

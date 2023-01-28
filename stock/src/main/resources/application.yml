@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: stock application
+
+server:
+  port: 8001

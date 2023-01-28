@@ -1,0 +1,35 @@
+server:
+  port: 8006
+spring:
+  application:
+    name: openfeign-order
+  cloud:
+    nacos:
+      server-addr: http://8.134.144.240:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: 66303517-4bae-4f16-9874-1466561154b2
+        group: test
+
+# springboot 默认的日志级别是 info, feign 是 debug ，info > debug，所以不会输出feign 日志，如果想要输出，添加以下配置：在此包下输出deubg日志
+logging:
+  level:
+    com.zitao.openfeign: debug
+
+
+feign:
+  client:
+    config:
+      openfeign-product:
+        # 连接超时时间，默认为2s
+        connect-timeout: 5000
+        # 请求处理超时时间，默认为5s
+        read-timeout: 10000
+        # 使用自定义的feign拦截器
+        request-interceptors:
+          com.zitao.openfeign.interceptor.FeignInterceptor
+
+# openFeign 的局部日志配置
+#        logger-level: FULL
+

@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: openfeign-product
+  cloud:
+    nacos:
+      server-addr: http://8.134.144.240:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: 66303517-4bae-4f16-9874-1466561154b2
+        group: test
+    inetutils:
+      preferred-networks: 192.168.0
+
+server:
+  port: 8008
+#  servlet:
+#    encoding:
+#      charset: utf-8
+#      force: true
+#      enabled: true

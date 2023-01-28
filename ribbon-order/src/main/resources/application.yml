@@ -1,0 +1,21 @@
+server:
+  port: 8010
+spring:
+  application:
+    name: ribbon-nacos
+  cloud:
+    nacos:
+      server-addr: http://8.134.144.240:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: 66303517-4bae-4f16-9874-1466561154b2
+        group: test
+    inetutils:
+      preferred-networks: 192.168.0
+  #
+  #stock-nacos:
+  #  ribbon:
+  # 指定使用Nacos提供的负载均衡策略（优先调用同一集群的实例，基于随机&权重）
+  #    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
+

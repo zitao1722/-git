@@ -1,0 +1,30 @@
+server:
+  port: 8016
+spring:
+  application:
+    name: sentinel-order
+  cloud:
+    nacos:
+      server-addr: 8.134.144.240:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: 66303517-4bae-4f16-9874-1466561154b2
+        group: test
+      config:
+        server-addr: 8.134.144.240:8848
+        file-extension: yaml
+        namespace: 66303517-4bae-4f16-9874-1466561154b2
+        group: test
+        prefix: sentinel-order
+    sentinel:
+      enabled: true
+      transport:
+        dashboard: 127.0.0.1:8020
+        port: 8719
+  config:
+    import:
+      - optional:nacos:sentinel-order-dev.yaml
+
+  profiles:
+    active: dev

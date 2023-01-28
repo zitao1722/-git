@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zitao.seata.mappers.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.zitao.seata.entity.Order">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="total_amount" jdbcType="INTEGER" property="totalAmount"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.zitao.seata.entity.Order">
+        insert into order_tbl (id, product_id, total_amount,
+                               `status`)
+        values (#{id,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{totalAmount,jdbcType=INTEGER},
+                #{status,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="com.zitao.seata.entity.Order">
+        insert into order_tbl
+        (
+        <trim suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="totalAmount != null">
+                total_amount,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+        </trim>
+        ) values (
+        <trim suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="totalAmount != null">
+                #{totalAmount,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+        )
+    </insert>
+
+    <delete id="deleteOrder" parameterType="com.zitao.seata.entity.Order">
+        delete
+        from order_tbl
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectById" resultType="com.zitao.seata.entity.Order" parameterType="_integer">
+        select id, product_id, total_amount, status
+        from order_tbl
+        where id = #{id}
+    </select>
+</mapper>

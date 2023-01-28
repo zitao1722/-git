@@ -1,0 +1,85 @@
+server:
+  port: 8034
+#  servlet:
+#    encoding:
+#      charset: utf-8
+#      force: true
+#      enabled: true
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    nacos:
+      server-addr: http://8.134.144.240:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: 22af6add-e59e-45b8-a73f-0b57860a248a # 原本为：66303517-4bae-4f16-9874-1466561154b2，是test
+        group: SEATA_GROUP  # 原为test，后面为了演示skywalking自定义追踪，改为了seata
+      config:
+        server-addr: 8.134.144.240:8848
+        namespace: 22af6add-e59e-45b8-a73f-0b57860a248a # 66303517-4bae-4f16-9874-1466561154b2
+        prefix: api-gateway
+        group: SEATA_GROUP
+        file-extension: yaml
+    inetutils:
+      preferred-networks: 192.168.0
+    #    sentinel:
+    #      enabled: true
+    #      transport:
+    #        dashboard: 127.0.0.1:8020
+    #        port: 8719
+    #      scg:
+    #        fallback:
+    #          mode: response
+    #          response-body: "{code:'429',message:'限流了'}"
+    # gateway的配置
+    gateway:
+      # 路由规则，可以点进去查看有什么参数，然后进行配置
+      routes:
+        - id: openfeignProduct_route # 路由的唯一标识，路由到其他服务，例如：openfeign-product
+          # uri: http://127.0.0.1:8008 # 需要转发的地址，这里是 openfeign-product的地址，如果使用nacos则直接使用服务名
+          # 前面的lb意为，使用loadbalance本地负载均衡策略
+          uri: lb://openfeign-product
+          # 断言规则，用于路由规则的匹配
+          predicates:
+            - Path=/openfeignProduct/**
+            - CheckAuth=zitao  # 自定义的断言工厂
+            # 上面这个配置的意思是，如果请求路径中带有 openfeignProduct，那么就将此请求进行路由
+            # 例如，请求路径：http://localhost:8034/openfeignProduct/product/{id}  会被转发到
+            # http://localhost:8008/openfeignProduct/product/{id}  但是在 openfeignProduct 服务中没有此路径，多了一个 /openfeignProduct
+            # 此时就需要配置 filters
+          filters:
+            - StripPrefix=1  # 转发请求前去掉 第一层路径，这样上面例子转发的路径就变成了：http://localhost:8008/product/{id}，这样就可以正常访问
+            - MyTest=filterTest  # 自定义的过滤器工厂，要求请求路径中有名为name的参数，且值为这里设置的filterTest
+        # 下面是网关调用 seata-order 服务的配置
+        - id: seataOrder_route
+          uri: lb://seata-order
+          predicates:
+            - Path=/seata/**
+          filters:
+            - StripPrefix=1
+      # Gateway 允许跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]': # 这是允许被跨域访问的资源
+            allowedOrigins: "https://docs.spring.io"  # 跨域允许来源，如果写 * 则所有来源都可以
+            allowedMethods:
+              - GET
+              - POST
+  config:
+    import:
+      - optional:nacos:api-gateway-test.yaml
+      # 下面的配置是使用自动识别nacos服务，有了这个就可以注释掉上面的id/uri...这些配置，使用默认的配置
+      # 如果整合了nacos，那么开启此配置，将使用服务名作为断言规则，并且路由时会自动去除路径
+      # 例如访问网关：http://localhost:8034/openfeign-product/product/{id} 会自动路由到 http://localhost:8008/product/{id}
+  profiles:
+    active: test
+#      discovery:
+#        locator:
+#          enabled: true
+
+# 启用 openfeign 对 sentinel 的支持
+#feign:
+#  sentinel:
+#    enabled: true

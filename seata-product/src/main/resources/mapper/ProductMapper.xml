@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zitao.seata.mappers.ProductMapper">
+    <resultMap type="com.zitao.seata.entity.Product" id="ProductTblMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="productId" column="product_id" jdbcType="INTEGER"/>
+        <result property="count" column="count" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ProductTblMap">
+        select id,
+               product_id,
+               count
+        from product_tbl
+        where product_id = #{productId}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Integer">
+        select count(1)
+        from product_tbl
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="productId != null">
+                and product_id = #{productId}
+            </if>
+            <if test="count != null">
+                and count = #{count}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="Integer" useGeneratedKeys="false">
+        insert into product_tbl(id, product_id, count)
+        values (#{id}, #{productId}, #{count})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="false">
+        insert into product_tbl(id, product_id, count)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id}, #{entity.productId}, #{entity.count})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="false">
+        insert into product_tbl(id, product_id, count)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id}, #{entity.productId}, #{entity.count})
+        </foreach>
+        on duplicate key update
+        id = values(id),
+        product_id = values(product_id),
+        count = values(count)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="updateCount">
+        update product_tbl
+        set count = count - 1
+        where product_id = #{product.productId}
+    </update>
+
+    <update id="incrCount">
+        update product_tbl
+        set count = count + 1
+        where product_id = #{product.productId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from product_tbl
+        where product_id = #{productId}
+    </delete>
+</mapper>
+
